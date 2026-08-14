@@ -66,3 +66,26 @@ body {
   color: #888;
   font-size: 0.875rem;
 }
+
+.movie-details {
+  display: flex;
+  gap: 2rem;
+  padding: 2rem;
+  align-items: flex-start;
+}
+
+.movie-details-poster {
+  width: 300px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.book-button {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  background: #e50914;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+}
