@@ -1,10 +1,11 @@
-import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
   return (
     <main>
       <h1>Movie Ticket Booking</h1>
-      <p>Welcome - Movie listing will go </p>
+      <p>Book tickets for the latest movies, fast and easy.</p>
+      <Link href="/movies">Browse Movies</Link>
     </main>
-  )
+  );
 }
