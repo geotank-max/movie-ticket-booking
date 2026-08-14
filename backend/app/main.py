@@ -2,10 +2,13 @@ from fastapi import FastAPI, Depends
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
+from app.routers import movie 
+
 from app.db.database import get_db
 
 app = FastAPI(title="Movie Ticket Booking API")
 
+app.include_router(movie.router)
 
 @app.get("/")
 def read_root():
