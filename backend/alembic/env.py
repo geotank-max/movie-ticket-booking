@@ -8,6 +8,7 @@ load_dotenv()
 
 from app.db.database import Base
 from app.core.config import DATABASE_URL
+import app.models # noqa: F401  -- registers all models with Base.metadata
 
 from logging.config import fileConfig
 
