@@ -89,3 +89,24 @@ body {
   text-decoration: none;
   border-radius: 6px;
 }
+
+.showtimes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.showtime-card {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+  border: 1px solid #333;
+  border-radius: 6px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.showtime-card:hover {
+  border-color: #e50914;
+}
