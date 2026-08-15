@@ -49,3 +49,22 @@ export async function getShowtime(showtimeId) {
 
   return res.json();
 }
+
+export async function createBooking(showtimeId, seatIds){
+  const res = await fetch(`${API_URL}/bookings/`, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ showtime_id: Number(showtimeId), seat_ids: seatIds}),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    const error = new Error(data.detail || "Failed to create booking");
+    error.status = res.status;
+    throw error;
+  }
+
+  return data;
+}
+
