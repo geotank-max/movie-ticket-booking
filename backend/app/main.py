@@ -10,7 +10,7 @@ from app.db.database import get_db
 app = FastAPI(title="Movie Ticket Booking API")
 
 origins = [
-    "http://localhost:3001",
+    "http://localhost:3000",
 ]
 
 app.add_middleware(

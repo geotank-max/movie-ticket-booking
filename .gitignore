@@ -11,7 +11,16 @@ ENV/
 
 # Environment variables
 .env
-.env.*
+.env.local
+.env.*.local
+
+# But keep example files
+!.env.example
+!.env.local.example
+
+# Docker override (for local customization)
+docker-compose.override.yml
+!docker-compose.override.example.yml
 
 # FastAPI
 .pytest_cache/
