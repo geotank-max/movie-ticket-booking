@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from app.routers import movie 
+from app.routers import movie, showtime
 
 from app.db.database import get_db
 
@@ -22,6 +22,7 @@ app.add_middleware(
 )
 
 app.include_router(movie.router)
+app.include_router(showtime.router)
 
 @app.get("/")
 def read_root():
