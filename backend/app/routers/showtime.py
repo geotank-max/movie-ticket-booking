@@ -2,11 +2,16 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session, joinedload
 
 from app.db.database import get_db
+
 from app.models.showtime import Showtime
+from app.models.seat import Seat
+from app.models.booking_seat import BookingSeat
+from app.models.booking import Booking
+
 from app.schemas.showtime import ShowtimeCreate, ShowtimeOut
+from app.schemas.seat import SeatAvailability
 
 router = APIRouter(prefix="/showtimes", tags=["showtimes"])
-
 
 @router.get("/", response_model=list[ShowtimeOut])
 def list_showtimes(
@@ -43,3 +48,37 @@ def create_showtime(showtime_data: ShowtimeCreate, db: Session = Depends(get_db)
     db.commit()
     db.refresh(showtime)
     return showtime
+
+@router.get("/{showtime_id}/seats", response_model=list[SeatAvailability])
+def get_showtime_seats(showtime_id: int, db: Session = Depends(get_db)):
+    showtime = db.query(Showtime).filter(Showtime.id == showtime_id).first()
+    if not showtime:
+        raise HTTPException(status_code=404, detail="Showtime not found")
+
+    all_seats = (
+        db.query(Seat)
+        .filter(Seat.cinema_id == showtime.cinema_id)
+        .order_by(Seat.row_label, Seat.seat_number)
+        .all()
+    )
+
+    booked_seat_ids = {
+        row.seat_id
+        for row in (
+            db.query(BookingSeat.seat_id)
+            .join(Booking, Booking.id == BookingSeat.booking_id)
+            .filter(Booking.showtime_id == showtime_id)
+            .filter(Booking.status != "cancelled")
+            .all()
+        )
+    }
+
+    return [
+        SeatAvailability(
+            id=seat.id,
+            row_label=seat.row_label,
+            seat_number=seat.seat_number,
+            is_booked=seat.id in booked_seat_ids,
+        )
+        for seat in all_seats
+    ]

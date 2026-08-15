@@ -11,5 +11,5 @@ class Cinema(Base):
     name = Column(String, nullable=False)
     location = Column(String, nullable=True)
 
-    seats = relationship("Seat", back_populates="cinema")
-    showtimes = relationship("Showtime", back_populates="cinema")
+    seats = relationship("Seat", back_populates="cinema", cascade="all, delete-orphan")
+    showtimes = relationship("Showtime", back_populates="cinema", cascade="all, delete-orphan")

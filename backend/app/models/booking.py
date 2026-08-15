@@ -14,6 +14,6 @@ class Booking(Base):
 
     user = relationship("User", back_populates="bookings")
     showtime = relationship("Showtime", back_populates="bookings")
-    booking_seats = relationship("BookingSeat", back_populates="booking")
+    booking_seats = relationship("BookingSeat", back_populates="booking", cascade="all, delete-orphan")
 
     
