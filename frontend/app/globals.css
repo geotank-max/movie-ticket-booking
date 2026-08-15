@@ -110,3 +110,117 @@ body {
 .showtime-card:hover {
   border-color: #e50914;
 }
+
+.seat-selector {
+  padding: 2rem;
+  max-width: 600px;
+}
+
+.screen-indicator {
+  text-align: center;
+  padding: 0.5rem;
+  margin-bottom: 2rem;
+  background: #333;
+  border-radius: 4px 4px 40px 40px;
+  color: #888;
+  letter-spacing: 0.2em;
+  font-size: 0.75rem;
+}
+
+.seat-map {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.seat-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.row-label {
+  width: 1.5rem;
+  text-align: center;
+  color: #888;
+  font-size: 0.8rem;
+}
+
+.seat {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 4px;
+  border: none;
+  font-size: 0.75rem;
+  display: inline-block;
+}
+
+button.seat {
+  cursor: pointer;
+}
+
+.seat-available {
+  background: #2a2a2a;
+  color: #ccc;
+}
+
+.seat-available:hover {
+  background: #3a3a3a;
+}
+
+.seat-selected {
+  background: #e50914;
+  color: white;
+}
+
+.seat-booked {
+  background: #444;
+  color: #666;
+  cursor: not-allowed;
+}
+
+.seat-legend {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+  font-size: 0.85rem;
+  color: #aaa;
+  align-items: center;
+}
+
+.seat-legend i.seat {
+  width: 1rem;
+  height: 1rem;
+}
+
+.seat-legend span {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.booking-summary {
+  border-top: 1px solid #333;
+  padding-top: 1.5rem;
+  text-align: center;
+}
+
+.total-price {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin: 0.5rem 0 1rem;
+}
+
+.booking-summary .book-button {
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.booking-summary .book-button:disabled {
+  background: #555;
+  cursor: not-allowed;
+}

@@ -29,3 +29,23 @@ export async function getShowtimesByMovie(movieId){
 
   return res.json();
 }
+
+export async function getShowtimeSeats(showtimeId) {
+  const res = await fetch(`${API_URL}/showtimes/${showtimeId}/seats`);
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch seats");
+  }
+
+  return res.json();
+}
+
+export async function getShowtime(showtimeId) {
+  const res = await fetch(`${API_URL}/showtimes/${showtimeId}`);
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch showtime");
+  }
+
+  return res.json();
+}
