@@ -15,6 +15,7 @@ class SeatBulkCreate(BaseModel):
     rows: list[str]
     seats_per_row: int
 
+
 class SeatAvailability(BaseModel):
     id: int
     row_label: str
