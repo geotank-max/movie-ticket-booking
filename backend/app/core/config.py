@@ -1,10 +1,9 @@
 import os
 from dotenv import load_dotenv
 
-# Load .env first (default config)
 load_dotenv()
 
-# Load .env.local if it exists (overrides for local development)
-load_dotenv('.env.local', override=True)
-
 DATABASE_URL = os.getenv("DATABASE_URL")
+JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
+JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
+JWT_EXPIRE_MINUTES = int(os.getenv("JWT_EXPIRE_MINUTES", "60"))

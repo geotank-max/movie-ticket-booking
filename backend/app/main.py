@@ -3,8 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from app.routers import movie, showtime, cinema, seat, booking
-
+from app.routers import movie, showtime, cinema, seat, booking, auth
 from app.db.database import get_db
 
 app = FastAPI(title="Movie Ticket Booking API")
@@ -21,12 +20,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-app.include_router(seat.router)
-app.include_router(booking.router)
-app.include_router(cinema.router)
+app.include_router(auth.router)
 app.include_router(movie.router)
 app.include_router(showtime.router)
+app.include_router(cinema.router)
+app.include_router(seat.router)
+app.include_router(booking.router)
 
 @app.get("/")
 def read_root():
