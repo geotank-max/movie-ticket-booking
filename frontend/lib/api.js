@@ -1,3 +1,11 @@
+import { getToken } from "@/lib/auth";
+
+
+function authHeaders() {
+  const token = getToken();
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export async function getMovies() {
@@ -53,7 +61,7 @@ export async function getShowtime(showtimeId) {
 export async function createBooking(showtimeId, seatIds){
   const res = await fetch(`${API_URL}/bookings/`, {
     method: "POST",
-    headers: {"Content-Type": "application/json"},
+    headers: {"Content-Type": "application/json", ...authHeaders(), },
     body: JSON.stringify({ showtime_id: Number(showtimeId), seat_ids: seatIds}),
   });
 
@@ -68,3 +76,36 @@ export async function createBooking(showtimeId, seatIds){
   return data;
 }
 
+export async function registerUser(email, password) {
+  const res = await fetch(`${API_URL}/auth/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.detail || "Registration failed");
+  return data;
+}
+
+export async function loginUser(email, password) {
+  const formBody = new URLSearchParams();
+  formBody.append("username", email);
+  formBody.append("password", password);
+
+  const res = await fetch(`${API_URL}/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: formBody,
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.detail || "Login failed");
+  return data;
+}
+
+export async function getCurrentUser() {
+  const res = await fetch(`${API_URL}/auth/me`, {
+    headers: authHeaders(),
+  });
+  if (!res.ok) return null;
+  return res.json();
+}

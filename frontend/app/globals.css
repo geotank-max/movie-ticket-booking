@@ -522,3 +522,32 @@ body {
   color: #ff6b6b;
   margin-top: 1rem;
 }
+
+.auth-page {
+  padding: 2rem;
+  max-width: 360px;
+}
+
+.auth-page form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.auth-page input {
+  padding: 0.6rem;
+  border-radius: 4px;
+  border: 1px solid #444;
+  background: #1a1a1a;
+  color: white;
+}
+
+.auth-page button {
+  padding: 0.75rem;
+  background: #e50914;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}

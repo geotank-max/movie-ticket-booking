@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter, useParams } from "next/navigation";
 import { getShowtime, createBooking } from "@/lib/api";
+import { getToken } from "@/lib/auth";
 import Link from "next/link";
 
 export default function ConfirmBookingPage() {
@@ -17,6 +18,14 @@ export default function ConfirmBookingPage() {
   const [status, setStatus] = useState("loading"); // loading | ready | submitting | error | success
   const [errorMessage, setErrorMessage] = useState("");
   const [confirmedBooking, setConfirmedBooking] = useState(null);
+
+  // Auth guard — redirect to login, preserving the return URL
+  useEffect(() => {
+    if (!getToken()) {
+      const returnTo = `/booking/${showtimeId}/confirm?seats=${searchParams.get("seats")}`;
+      router.push(`/login?redirect=${encodeURIComponent(returnTo)}`);
+    }
+  }, []);
 
   useEffect(() => {
     getShowtime(showtimeId)
@@ -51,7 +60,7 @@ export default function ConfirmBookingPage() {
         <p>{confirmedBooking.showtime.movie.title}</p>
         <p>{confirmedBooking.showtime.cinema.name}</p>
         <p>{confirmedBooking.seat_ids.length} seat(s) booked</p>
-        <Link href="/bookings">View my bookings</Link>
+        <Link href="/movies">Back to movies</Link>
       </main>
     );
   }
