@@ -109,3 +109,15 @@ export async function getCurrentUser() {
   if (!res.ok) return null;
   return res.json();
 }
+
+export async function getMyBookings() {
+  const res = await fetch(`${API_URL}/bookings/`, {
+    headers: authHeaders(),
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch bookings");
+  }
+
+  return res.json();
+}

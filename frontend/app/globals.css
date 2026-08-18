@@ -551,3 +551,72 @@ body {
   border-radius: 6px;
   cursor: pointer;
 }
+
+.bookings-page {
+  padding: 2rem;
+  max-width: 700px;
+}
+
+.bookings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.booking-card {
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 1.25rem;
+}
+
+.booking-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.status-badge {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  text-transform: capitalize;
+}
+
+.status-confirmed {
+  background: #1a4d2e;
+  color: #4ade80;
+}
+
+.status-cancelled {
+  background: #4d1a1a;
+  color: #f87171;
+}
+
+.main-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid #333;
+}
+
+.nav-brand {
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.nav-links a {
+  color: #ccc;
+  text-decoration: none;
+}
+
+.nav-links a:hover {
+  color: white;
+}
