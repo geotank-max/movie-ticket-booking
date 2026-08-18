@@ -26,6 +26,7 @@ export default function RootLayout({ children }) {
           <div className="nav-links">
             <Link href="/movies">Movies</Link>
             <Link href="/bookings">My Bookings</Link>
+            <Link href="/admin">Admin</Link>
             <Link href="/login">Log In</Link>
           </div>
         </nav>

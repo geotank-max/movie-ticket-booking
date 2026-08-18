@@ -110,6 +110,28 @@ export async function getCurrentUser() {
   return res.json();
 }
 
+export async function createMovie(movieData){
+  const res = await fetch(`${API_URL}/movies/`, {
+    method: "POST",
+    headers: {"Content-Type": "application/json", ...authHeaders( )},
+    body: JSON.stringify(movieData),
+  }); 
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.detail || "Failed to create movie");
+  return data;
+}
+
+export async function deleteMovie(movieId) {
+  const res = await fetch(`${API_URL}/movies/${movieId}`, {
+    method: "DELETE",
+    headers: authHeaders(),
+  });
+  if (!res.ok && res.status !== 204){
+    const data = await res.json();
+    throw new Error(data.detail || "Failed to delete movie");
+  }
+}
+
 export async function getMyBookings() {
   const res = await fetch(`${API_URL}/bookings/`, {
     headers: authHeaders(),
@@ -119,5 +141,13 @@ export async function getMyBookings() {
     throw new Error("Failed to fetch bookings");
   }
 
+  return res.json();
+}
+
+export async function getAllBookings() {
+  const res = await fetch(`${API_URL}/bookings/admin/all`, {
+    headers: authHeaders(),
+  });
+  if (!res.ok) throw new Error("Failed to fetch bookings");
   return res.json();
 }
