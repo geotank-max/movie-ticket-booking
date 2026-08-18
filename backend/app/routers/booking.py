@@ -93,3 +93,44 @@ def create_booking(
     )
 
     return BookingOut.from_booking(booking)
+
+@router.get("/", response_model=list[BookingOut])
+def list_my_bookings(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    bookings = (
+        db.query(Booking)
+        .options(
+            joinedload(Booking.booking_seats),
+            joinedload(Booking.showtime).joinedload(Showtime.movie),
+            joinedload(Booking.showtime).joinedload(Showtime.cinema),
+        )
+        .filter(Booking.user_id == current_user.id)
+        .order_by(Booking.booking_time.desc())
+        .all()
+    )
+    return [BookingOut.from_booking(b) for b in bookings]
+
+
+@router.get("/{booking_id}", response_model=BookingOut)
+def get_my_booking(
+    booking_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    booking = (
+        db.query(Booking)
+        .options(
+            joinedload(Booking.booking_seats),
+            joinedload(Booking.showtime).joinedload(Showtime.movie),
+            joinedload(Booking.showtime).joinedload(Showtime.cinema),
+        )
+        .filter(Booking.id == booking_id)
+        .filter(Booking.user_id == current_user.id)
+        .first()
+    )
+    if not booking:
+        raise HTTPException(status_code=404, detail="Booking not found")
+
+    return BookingOut.from_booking(booking)
