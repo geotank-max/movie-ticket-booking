@@ -3,8 +3,10 @@ from sqlalchemy.orm import Session
 
 from app.db.database import get_db
 from app.models.seat import Seat
+from app.models.user import User
 from app.models.cinema import Cinema
 from app.schemas.seat import SeatOut, SeatBulkCreate
+from app.core.dependencies import require_admin
 
 router = APIRouter(prefix="/seats", tags=["seats"])
 
@@ -18,7 +20,11 @@ def list_seats(cinema_id: int | None = None, db: Session = Depends(get_db)):
 
 
 @router.post("/bulk", response_model=list[SeatOut], status_code=201)
-def bulk_create_seats(data: SeatBulkCreate, db: Session = Depends(get_db)):
+def bulk_create_seats(
+    data: SeatBulkCreate, 
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin),    
+):
     cinema = db.query(Cinema).filter(Cinema.id == data.cinema_id).first()
     if not cinema:
         raise HTTPException(status_code=404, detail="Cinema not found")

@@ -7,9 +7,12 @@ from app.models.showtime import Showtime
 from app.models.seat import Seat
 from app.models.booking_seat import BookingSeat
 from app.models.booking import Booking
+from app.models.user import User
 
 from app.schemas.showtime import ShowtimeCreate, ShowtimeOut
 from app.schemas.seat import SeatAvailability
+
+from app.core.dependencies import require_admin
 
 router = APIRouter(prefix="/showtimes", tags=["showtimes"])
 
@@ -42,7 +45,11 @@ def get_showtime(showtime_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/", response_model=ShowtimeOut, status_code=201)
-def create_showtime(showtime_data: ShowtimeCreate, db: Session = Depends(get_db)):
+def create_showtime(
+    showtime_data: ShowtimeCreate, 
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin),    
+):
     showtime = Showtime(**showtime_data.model_dump())
     db.add(showtime)
     db.commit()

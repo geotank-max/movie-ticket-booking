@@ -2,8 +2,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.db.database import get_db
+from app.models.user import User
 from app.models.cinema import Cinema
 from app.schemas.cinema import CinemaCreate, CinemaUpdate, CinemaOut
+from app.core.dependencies import require_admin
 
 router = APIRouter(prefix="/cinemas", tags=["cinemas"])
 
@@ -14,7 +16,11 @@ def list_cinemas(db: Session = Depends(get_db)):
 
 
 @router.get("/{cinema_id}", response_model=CinemaOut)
-def get_cinema(cinema_id: int, db: Session = Depends(get_db)):
+def get_cinema(
+    cinema_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin),
+):
     cinema = db.query(Cinema).filter(Cinema.id == cinema_id).first()
     if not cinema:
         raise HTTPException(status_code=404, detail="Cinema not found")
@@ -22,7 +28,11 @@ def get_cinema(cinema_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/", response_model=CinemaOut, status_code=201)
-def create_cinema(cinema_data: CinemaCreate, db: Session = Depends(get_db)):
+def create_cinema(
+    cinema_data: CinemaCreate, 
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin),
+):
     cinema = Cinema(**cinema_data.model_dump())
     db.add(cinema)
     db.commit()
@@ -31,7 +41,12 @@ def create_cinema(cinema_data: CinemaCreate, db: Session = Depends(get_db)):
 
 
 @router.put("/{cinema_id}", response_model=CinemaOut)
-def update_cinema(cinema_id: int, cinema_data: CinemaUpdate, db: Session = Depends(get_db)):
+def update_cinema(
+    cinema_id: int, 
+    cinema_data: CinemaUpdate, 
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin),
+):
     cinema = db.query(Cinema).filter(Cinema.id == cinema_id).first()
     if not cinema:
         raise HTTPException(status_code=404, detail="Cinema not found")
@@ -46,7 +61,11 @@ def update_cinema(cinema_id: int, cinema_data: CinemaUpdate, db: Session = Depen
 
 
 @router.delete("/{cinema_id}", status_code=204)
-def delete_cinema(cinema_id: int, db: Session = Depends(get_db)):
+def delete_cinema(
+    cinema_id: int, 
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin),    
+):
     cinema = db.query(Cinema).filter(Cinema.id == cinema_id).first()
     if not cinema:
         raise HTTPException(status_code=404, detail="Cinema not found")

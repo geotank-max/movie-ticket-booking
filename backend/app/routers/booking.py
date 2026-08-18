@@ -11,7 +11,7 @@ from app.models.user import User
 
 from app.schemas.booking import BookingCreate, BookingOut
 
-from app.core.dependencies import get_current_user
+from app.core.dependencies import get_current_user, require_admin
 
 router = APIRouter(prefix="/bookings", tags=["bookings"])
 
@@ -134,3 +134,20 @@ def get_my_booking(
         raise HTTPException(status_code=404, detail="Booking not found")
 
     return BookingOut.from_booking(booking)
+
+@router.get("/admin/all", response_model=list[BookingOut])
+def list_all_bookings(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin),
+):
+    bookings = (
+        db.query(Booking)
+        .options(
+            joinedload(Booking.booking_seats),
+            joinedload(Booking.showtime).joinedload(Showtime.movie),
+            joinedload(Booking.showtime).joinedload(Showtime.cinema),
+        )
+        .order_by(Booking.booking_time.desc())
+        .all()
+    )
+    return [BookingOut.from_booking(b) for b in bookings]

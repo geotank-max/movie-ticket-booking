@@ -3,7 +3,9 @@ from sqlalchemy.orm import Session
 
 from app.db.database import get_db
 from app.models.movie import Movie
+from app.models.user import User
 from app.schemas.movie import MovieCreate, MovieUpdate, MovieOut
+from app.core.dependencies import require_admin
 
 router = APIRouter(prefix="/movies", tags=["movies"])
 
@@ -22,7 +24,11 @@ def get_movie(movie_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/", response_model=MovieOut, status_code=201)
-def create_movie(movie_data: MovieCreate, db: Session = Depends(get_db)):
+def create_movie(
+    movie_data: MovieCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin),
+):
     movie = Movie(**movie_data.model_dump())
     db.add(movie)
     db.commit()
@@ -31,7 +37,12 @@ def create_movie(movie_data: MovieCreate, db: Session = Depends(get_db)):
 
 
 @router.put("/{movie_id}", response_model=MovieOut)
-def update_movie(movie_id: int, movie_data: MovieUpdate, db: Session = Depends(get_db)):
+def update_movie(
+    movie_id: int,
+    movie_data: MovieUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin),
+):
     movie = db.query(Movie).filter(Movie.id == movie_id).first()
     if not movie:
         raise HTTPException(status_code=404, detail="Movie not found")
@@ -46,7 +57,11 @@ def update_movie(movie_id: int, movie_data: MovieUpdate, db: Session = Depends(g
 
 
 @router.delete("/{movie_id}", status_code=204)
-def delete_movie(movie_id: int, db: Session = Depends(get_db)):
+def delete_movie(
+    movie_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin),
+):
     movie = db.query(Movie).filter(Movie.id == movie_id).first()
     if not movie:
         raise HTTPException(status_code=404, detail="Movie not found")
