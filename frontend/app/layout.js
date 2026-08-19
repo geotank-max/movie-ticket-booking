@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
+import NavUser from "@/components/NavUser";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,8 +27,7 @@ export default function RootLayout({ children }) {
           <div className="nav-links">
             <Link href="/movies">Movies</Link>
             <Link href="/bookings">My Bookings</Link>
-            <Link href="/admin">Admin</Link>
-            <Link href="/login">Log In</Link>
+            <NavUser />
           </div>
         </nav>
         {children}
