@@ -6,10 +6,17 @@ function authHeaders() {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+function getApiUrl() {
+  if (typeof window === "undefined") {
+    // Server-side: use internal Docker URL if available
+    return process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL;
+  }
+  // Client-side: use the public URL (accessible from user's browser)
+  return process.env.NEXT_PUBLIC_API_URL;
+}
 
 export async function getMovies() {
-  const res = await fetch(`${API_URL}/movies/`);
+  const res = await fetch(`${getApiUrl()}/movies/`);
 
   if (!res.ok) {
     throw new Error("Failed to fetch movies");
@@ -19,7 +26,7 @@ export async function getMovies() {
 }
 
 export async function getMovie(id) {
-  const res = await fetch(`${API_URL}/movies/${id}`);
+  const res = await fetch(`${getApiUrl()}/movies/${id}`);
 
   if (!res.ok) {
     throw new Error("Failed to fetch movie");
@@ -29,7 +36,7 @@ export async function getMovie(id) {
 }
 
 export async function getShowtimesByMovie(movieId){
-  const res = await fetch (`${API_URL}/showtimes/?movie_id=${movieId}`);
+  const res = await fetch (`${getApiUrl()}/showtimes/?movie_id=${movieId}`);
 
   if (!res.ok) {
     throw new Error("Failed to fetch showtimes");
@@ -39,7 +46,7 @@ export async function getShowtimesByMovie(movieId){
 }
 
 export async function getShowtimeSeats(showtimeId) {
-  const res = await fetch(`${API_URL}/showtimes/${showtimeId}/seats`);
+  const res = await fetch(`${getApiUrl()}/showtimes/${showtimeId}/seats`);
 
   if (!res.ok) {
     throw new Error("Failed to fetch seats");
@@ -49,7 +56,7 @@ export async function getShowtimeSeats(showtimeId) {
 }
 
 export async function getShowtime(showtimeId) {
-  const res = await fetch(`${API_URL}/showtimes/${showtimeId}`);
+  const res = await fetch(`${getApiUrl()}/showtimes/${showtimeId}`);
 
   if (!res.ok) {
     throw new Error("Failed to fetch showtime");
@@ -59,7 +66,7 @@ export async function getShowtime(showtimeId) {
 }
 
 export async function createBooking(showtimeId, seatIds){
-  const res = await fetch(`${API_URL}/bookings/`, {
+  const res = await fetch(`${getApiUrl()}/bookings/`, {
     method: "POST",
     headers: {"Content-Type": "application/json", ...authHeaders(), },
     body: JSON.stringify({ showtime_id: Number(showtimeId), seat_ids: seatIds}),
@@ -77,7 +84,7 @@ export async function createBooking(showtimeId, seatIds){
 }
 
 export async function registerUser(email, password) {
-  const res = await fetch(`${API_URL}/auth/register`, {
+  const res = await fetch(`${getApiUrl()}/auth/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
@@ -92,7 +99,7 @@ export async function loginUser(email, password) {
   formBody.append("username", email);
   formBody.append("password", password);
 
-  const res = await fetch(`${API_URL}/auth/login`, {
+  const res = await fetch(`${getApiUrl()}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: formBody,
@@ -103,7 +110,7 @@ export async function loginUser(email, password) {
 }
 
 export async function getCurrentUser() {
-  const res = await fetch(`${API_URL}/auth/me`, {
+  const res = await fetch(`${getApiUrl()}/auth/me`, {
     headers: authHeaders(),
   });
   if (!res.ok) return null;
@@ -111,7 +118,7 @@ export async function getCurrentUser() {
 }
 
 export async function createMovie(movieData){
-  const res = await fetch(`${API_URL}/movies/`, {
+  const res = await fetch(`${getApiUrl()}/movies/`, {
     method: "POST",
     headers: {"Content-Type": "application/json", ...authHeaders( )},
     body: JSON.stringify(movieData),
@@ -122,7 +129,7 @@ export async function createMovie(movieData){
 }
 
 export async function deleteMovie(movieId) {
-  const res = await fetch(`${API_URL}/movies/${movieId}`, {
+  const res = await fetch(`${getApiUrl()}/movies/${movieId}`, {
     method: "DELETE",
     headers: authHeaders(),
   });
@@ -133,7 +140,7 @@ export async function deleteMovie(movieId) {
 }
 
 export async function getMyBookings() {
-  const res = await fetch(`${API_URL}/bookings/`, {
+  const res = await fetch(`${getApiUrl()}/bookings/`, {
     headers: authHeaders(),
   });
 
@@ -145,7 +152,7 @@ export async function getMyBookings() {
 }
 
 export async function getAllBookings() {
-  const res = await fetch(`${API_URL}/bookings/admin/all`, {
+  const res = await fetch(`${getApiUrl()}/bookings/admin/all`, {
     headers: authHeaders(),
   });
   if (!res.ok) throw new Error("Failed to fetch bookings");
