@@ -51,7 +51,12 @@ export default function BookingsPage() {
       ) : (
         <div className="bookings-list">
           {bookings.map((booking) => (
-            <div key={booking.id} className="booking-card">
+            <Link
+              key={booking.id}
+              href={`/bookings/${booking.id}`}
+              className="booking-card"
+              style={{ textDecoration: "none", color: "inherit" }}
+            >
               <div className="booking-card-header">
                 <h3>{booking.showtime.movie.title}</h3>
                 <span className={`status-badge status-${booking.status}`}>
@@ -61,7 +66,7 @@ export default function BookingsPage() {
               <p>{booking.showtime.cinema.name}</p>
               <p>{formatShowtime(booking.showtime.start_time)}</p>
               <p>{booking.seat_ids.length} seat(s) — Booking #{booking.id}</p>
-            </div>
+            </Link>
           ))}
         </div>
       )}

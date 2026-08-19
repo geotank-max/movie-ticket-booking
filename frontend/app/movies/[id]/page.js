@@ -1,38 +1,30 @@
-import { getMovie } from "@/lib/api";
-import Link from "next/link";
+import { getMovie, getShowtimesByMovie } from "@/lib/api";
 import { notFound } from "next/navigation";
+import Link from "next/link";
+import MovieHero from "@/components/MovieHero";
+import ShowtimePicker from "@/components/ShowtimePicker";
 
 export default async function MovieDetailsPage({ params }) {
   const { id } = await params;
 
-  let movie;
+  let movie, showtimes;
   try {
-    movie = await getMovie(id);
-  } catch (error) {
+    [movie, showtimes] = await Promise.all([
+      getMovie(id),
+      getShowtimesByMovie(id),
+    ]);
+  } catch {
     notFound();
   }
 
   return (
     <main>
-      <Link href="/movies">← Back to movies</Link>
-
-      <div className="movie-details">
-        {movie.poster_url && (
-          <img src={movie.poster_url} alt={movie.title} className="movie-details-poster" />
-        )}
-
-        <div>
-          <h1>{movie.title}</h1>
-          <p className="movie-meta">
-            {movie.genre} · {movie.duration_minutes} min
-          </p>
-          <p>{movie.description}</p>
-
-          <Link href={`/booking?movie_id=${movie.id}`} className="book-button">
-            View Showtimes
-          </Link>
-        </div>
+      <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0.75rem 2rem 0" }}>
+        <Link href="/movies" className="back-link">← Back to movies</Link>
       </div>
+
+      <MovieHero movie={movie} />
+      <ShowtimePicker showtimes={showtimes} />
     </main>
   );
 }

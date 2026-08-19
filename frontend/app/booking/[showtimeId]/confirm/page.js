@@ -5,6 +5,8 @@ import { useSearchParams, useRouter, useParams } from "next/navigation";
 import { getShowtime, createBooking } from "@/lib/api";
 import { getToken } from "@/lib/auth";
 import Link from "next/link";
+import DigitalTicket from "@/components/DigitalTicket";
+import TicketActions from "@/components/TicketActions";
 
 export default function ConfirmBookingPage() {
   const params = useParams();
@@ -19,7 +21,7 @@ export default function ConfirmBookingPage() {
   const [errorMessage, setErrorMessage] = useState("");
   const [confirmedBooking, setConfirmedBooking] = useState(null);
 
-  // Auth guard — redirect to login, preserving the return URL
+  // Auth guard
   useEffect(() => {
     if (!getToken()) {
       const returnTo = `/booking/${showtimeId}/confirm?seats=${searchParams.get("seats")}`;
@@ -49,40 +51,101 @@ export default function ConfirmBookingPage() {
     }
   }
 
-  if (status === "loading") return <main><p>Loading...</p></main>;
-  if (status === "error") return <main><p>Could not load this showtime.</p></main>;
-
-  if (status === "success") {
+  if (status === "loading") {
     return (
-      <main className="confirmation-page">
-        <h1>Booking Confirmed 🎬</h1>
-        <p>Your booking ID is #{confirmedBooking.id}</p>
-        <p>{confirmedBooking.showtime.movie.title}</p>
-        <p>{confirmedBooking.showtime.cinema.name}</p>
-        <p>{confirmedBooking.seat_ids.length} seat(s) booked</p>
-        <Link href="/movies">Back to movies</Link>
+      <main className="ticket-page">
+        <p style={{ color: "var(--text-tertiary)" }}>Loading...</p>
       </main>
     );
   }
 
+  if (status === "error") {
+    return (
+      <main className="ticket-page">
+        <p style={{ color: "var(--text-tertiary)" }}>Could not load this showtime.</p>
+      </main>
+    );
+  }
+
+  // ── Success: Show Digital Ticket ──────────────────────────────────
+  if (status === "success" && confirmedBooking) {
+    return (
+      <main className="ticket-page">
+        <div className="ticket-success-header">
+          <div className="ticket-success-header__icon">✓</div>
+          <h1 className="ticket-success-header__title">Booking Confirmed</h1>
+          <p className="ticket-success-header__ref">MTB-{confirmedBooking.id}</p>
+        </div>
+
+        <DigitalTicket booking={confirmedBooking} />
+        <TicketActions bookingId={confirmedBooking.id} />
+
+        <div style={{ marginTop: "2rem", textAlign: "center" }}>
+          <Link href="/bookings" className="back-link">
+            View all bookings →
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
+  // ── Pre-confirmation state ────────────────────────────────────────
   const total = (seatIds.length * Number(showtime.price)).toFixed(2);
 
   return (
-    <main className="confirmation-page">
-      <h1>Confirm Your Booking</h1>
-      <p>{showtime.movie.title}</p>
-      <p>{showtime.cinema.name}</p>
-      <p>{seatIds.length} seat(s) — Total: ${total}</p>
+    <main className="ticket-page">
+      <div className="ticket-card" style={{ animationName: "none", opacity: 1 }}>
+        <div className="ticket-card__header">
+          {showtime.movie.poster_url ? (
+            <img
+              src={showtime.movie.poster_url}
+              alt={showtime.movie.title}
+              className="ticket-card__poster"
+            />
+          ) : (
+            <div className="ticket-card__poster-fallback" aria-hidden="true">🎬</div>
+          )}
+          <div className="ticket-card__movie-info">
+            <h2 className="ticket-card__movie-title">{showtime.movie.title}</h2>
+            <p className="ticket-card__movie-meta">
+              {showtime.cinema.name}
+            </p>
+          </div>
+        </div>
 
-      {errorMessage && <p className="booking-error">{errorMessage}</p>}
+        <div className="ticket-card__divider" aria-hidden="true" />
 
-      <button
-        type="button"
-        onClick={handleConfirm}
-        disabled={status === "submitting"}
-      >
-        {status === "submitting" ? "Booking..." : "Confirm Booking"}
-      </button>
+        <div className="ticket-card__details">
+          <div className="ticket-detail">
+            <p className="ticket-detail__label">Seats</p>
+            <p className="ticket-detail__value">{seatIds.length} seat{seatIds.length !== 1 ? "s" : ""}</p>
+          </div>
+          <div className="ticket-detail">
+            <p className="ticket-detail__label">Price Each</p>
+            <p className="ticket-detail__value">${showtime.price}</p>
+          </div>
+          <div className="ticket-detail">
+            <p className="ticket-detail__label">Total</p>
+            <p className="ticket-detail__value ticket-detail__value--accent">${total}</p>
+          </div>
+        </div>
+      </div>
+
+      {errorMessage && (
+        <p style={{ color: "#ff6b6b", marginTop: "1rem", textAlign: "center" }}>
+          {errorMessage}
+        </p>
+      )}
+
+      <div className="cta-wrapper" style={{ marginTop: "1.5rem" }}>
+        <button
+          className="cta-book"
+          onClick={handleConfirm}
+          disabled={status === "submitting"}
+        >
+          {status === "submitting" ? "Booking..." : "Confirm Booking"}
+        </button>
+      </div>
     </main>
   );
 }
